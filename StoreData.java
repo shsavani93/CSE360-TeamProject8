@@ -7,7 +7,7 @@ public class StoreData {
         data = new ArrayList<>();
     }
 
-    public setData(String id, String lname,String fname,String type, String date, String location  ){
+    public void setData(String id, String lname,String fname,String type, String date, String location  ){
         String row = id+","+lname+","+fname+","+type+","+date+","+location;
         data.add(row);
     }
