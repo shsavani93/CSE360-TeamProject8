@@ -3,6 +3,16 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import javax.swing.JPanel;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.general.PieDataset;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 import javax.swing.*;
 
@@ -308,10 +318,67 @@ public class GUI
 	}
 	public void showHistogram()
 	{
-		placeholder.setText("Histogram placeholder");
+		resetMenuBar();
+		displayPanel.removeAll();
+		JFreeChart barChart = ChartFactory.createBarChart(
+				"Doses by vaccine type",
+				"Category",
+				"Score",
+				createDataSet(),
+				PlotOrientation.VERTICAL,
+				true, true, false);
+		JPanel chartPanel =  new ChartPanel( barChart );
+		chartPanel.setPreferredSize(new java.awt.Dimension( 560 , 367 ) );
+		displayPanel.add(chartPanel, BorderLayout.CENTER);
+		visualizeTab.setBackground(selected);
+		windowFrame.setVisible(true);
+		//placeholder.setText("Histogram placeholder");
 	}
 	public void showPieChart()
 	{
-		placeholder.setText("Pie Chart placeholder");
+		resetMenuBar();
+		displayPanel.removeAll();
+		JFreeChart chart = createChart(createDataset( ) );
+		JPanel chartPanel =  new ChartPanel( chart );
+		displayPanel.add(chartPanel, BorderLayout.CENTER);
+		visualizeTab.setBackground(selected);
+		windowFrame.setVisible(true);
+
+	}
+	private CategoryDataset createDataSet( ) {
+		final String pfizer = "Pfizer";
+		final String johnson = "Johnson&Johnson";
+		final String moderna = "Moderna";
+		final String doses = "Doses";
+		final DefaultCategoryDataset dataset =
+				new DefaultCategoryDataset( );
+
+		dataset.addValue( 10 , pfizer , doses );
+		dataset.addValue( 20 , moderna , doses );
+		dataset.addValue( 50 , johnson , doses );
+
+		return dataset;
+	}
+
+	private static PieDataset createDataset( ) {
+		System.out.println("in create data set");
+		DefaultPieDataset dataset = new DefaultPieDataset( );
+		dataset.setValue(  "India", new Double( 20 ) );
+		dataset.setValue( "Australia" , new Double( 20 ) );
+		dataset.setValue( "China" , new Double( 40 ) );
+		dataset.setValue( "United States" , new Double( 10 ) );
+		return dataset;
+	}
+
+	private static JFreeChart createChart( PieDataset dataset ) {
+		System.out.println("in create chart");
+		JFreeChart chart = ChartFactory.createPieChart(
+				"Doses by location",   // chart title
+				dataset,          // data
+				true,             // include legend
+				true,
+				false);
+
+		return chart;
 	}
 }
