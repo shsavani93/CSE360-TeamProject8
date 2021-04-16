@@ -280,6 +280,10 @@ public class GUI
 		visualizeTab.setBackground(selected);
 		windowFrame.setVisible(true);
 	}
+	// load data from csv file and display in table
+	public void openFile(String inFilePath) {
+		System.out.println("Will load csv file in this function");
+	}
 	//get the data from the add tab
 	public String[] getDataEntry()
 	{

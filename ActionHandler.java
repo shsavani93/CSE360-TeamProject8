@@ -51,6 +51,7 @@ public class ActionHandler implements ActionListener
 			{
 				fw = new FileWindow(true);
 				inFilePath = fw.getInputFilePath();
+				gui.openFile(inFilePath);
 				
 			}
 			//TODO do something with the filepath.... saved in String outfilePath
