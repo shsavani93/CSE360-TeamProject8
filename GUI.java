@@ -3,6 +3,9 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Arrays;
 import javax.swing.JPanel;
 
 import org.jfree.chart.ChartFactory;
@@ -15,6 +18,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class GUI
 {
@@ -24,6 +28,7 @@ public class GUI
 	private JTextField id, lastName, firstName, vaccineType, vaccineDate, vaccineLocation;
 	private JLabel addStatus;
 	private JTable table;
+	private DefaultTableModel tableModel;
 	
 	
 	
@@ -156,7 +161,8 @@ public class GUI
 		//load Panel Design
 		JPanel graphPanel = new JPanel();
 		graphPanel.setLayout(new GridLayout(0,1));
-		table = new JTable(data, columnLabels);
+		tableModel = new DefaultTableModel(data, columnLabels);
+		table = new JTable(tableModel);
 		graphPanel.add(table.getTableHeader());
 		graphPanel.add(table);
 		table.setDefaultEditor(Object.class, null);
@@ -282,7 +288,21 @@ public class GUI
 	}
 	// load data from csv file and display in table
 	public void openFile(String inFilePath) {
-		System.out.println("Will load csv file in this function");
+		// Storing CSV data
+		String csvData [][] = CSV.readCSV(inFilePath);
+		Object tableData [] = new Object[6];
+		// building the table row
+		for (int i = 1; i < csvData.length; i++) {
+			for (int j = 0; j < csvData[i].length; j++) {
+				if (csvData[i][j] == null || csvData[i][j].isEmpty()) {
+					tableData[j] = "-";
+				} else {
+					tableData[j] = csvData[i][j];
+				}
+			}
+			Object rowData [] = new  Object[]{tableData[0],tableData[1],tableData[2],tableData[3],tableData[4],tableData[5] };
+			tableModel.addRow(rowData);
+		}
 	}
 	//get the data from the add tab
 	public String[] getDataEntry()
@@ -291,8 +311,9 @@ public class GUI
 		return data;
 	}
 	//correct add tab syntax gui event
-	public void validEntry()
+	public void validEntry(Object rowData[] )
 	{
+		tableModel.addRow(rowData);
 		addStatus.setText("Entry successfully added.");
 		addStatus.setForeground(affirmatory);
 		id.setText("");
@@ -301,12 +322,30 @@ public class GUI
 		vaccineType.setText("");
 		vaccineDate.setText("");
 		vaccineLocation.setText("");
+		Timer timer = new Timer(2000, new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				addStatus.setText("");
+			}
+		});
+		timer.setInitialDelay(2000);
+		timer.start();
 	}
 	//incorrect add tab syntax gui event
 	public void invalidEntry()
 	{
 		addStatus.setText("Entry failed. Incorrect Format.");
 		addStatus.setForeground(negatory);
+		Timer timer = new Timer(2000, new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				addStatus.setText("");
+			}
+		});
+		timer.setInitialDelay(2000);
+		timer.start();
 	}
 	//save data gui event
 	public void saveDataInitiate()

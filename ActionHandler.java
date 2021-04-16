@@ -34,12 +34,8 @@ public class ActionHandler implements ActionListener
 			// TODO if(correct syntax)
 			if (true)
 			{
-				gui.validEntry(); //GUI EVENT
-				//***********************************************************************************
-				//TODO 
-				// add the entry to the database; put a call to a method here with the data above i.e. id, lname, fname, etc....
-				// ex: addEntry(id, lname, fname, etc)
-				//Should the data structure be static? ?? not sure
+				Object rowData [] = new  Object[]{id, lname, fname, type, date, location};
+				gui.validEntry(rowData); //GUI EVENT
 			}
 			else
 			{
