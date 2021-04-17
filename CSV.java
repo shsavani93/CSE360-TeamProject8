@@ -1,3 +1,5 @@
+import com.sun.org.apache.xpath.internal.operations.Variable;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,11 +12,8 @@ import javax.swing.JOptionPane;
 
 public class CSV {
 
-    /**
-     * Reads a Comma Separated Variable file into a 2D array of strings
-     * @param filePath String path of file to read
-     * @return String[][] 2D array of the values in the CSV
-     */
+    //Reads a Comma Separated Variable file into a 2D array of strings
+
     public static String[][] readCSV(String filePath) {
         ArrayList<String[]> data = new ArrayList<String[]>();
         boolean found = false;
@@ -57,12 +56,8 @@ public class CSV {
         return output;
     }
 
-    /**
-     * Writes the input 2D array of strings to a Comma Separated Variable file
-     * @param data String[][] data to be written to CSV
-     * @param filePath String path to which file is created
-     * @param fileName String name of the created file
-     */
+    //Writes the input 2D array of strings to a Comma Separated Variable file
+
     public static void writeCSV(String[][] data, String filePath) {
         try {
             FileWriter writer = new FileWriter(new File(filePath));
