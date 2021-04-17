@@ -6,7 +6,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.Arrays;
+import java.util.*;
 import javax.swing.JPanel;
 
 import org.jfree.chart.ChartFactory;
@@ -19,6 +19,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -403,64 +404,117 @@ public class GUI
 		saveTab.setBackground(secondary);
 		windowFrame.setVisible(true);
 	}
-	public void showHistogram()
+
+	/**
+	 * This is the method which display bar chart on visualize tab.
+	 * @param no params passed
+	 * @return void
+	 */
+	public void showBarChart()
 	{
 		resetMenuBar();
 		displayPanel.removeAll();
+
+		// create map of vaccine type to number of doses for each type
+		Map<Object, Integer> mapVaccineTypeToDoses = new HashMap<Object, Integer>();
+
+		for(int i = 1; i < tableModel.getRowCount() ; i++) {
+			Object vaccineType = tableModel.getValueAt(i, 3);
+			int numberOfDoses = mapVaccineTypeToDoses.containsKey(vaccineType) ? mapVaccineTypeToDoses.get(vaccineType) : 0;
+			mapVaccineTypeToDoses.put(vaccineType, numberOfDoses + 1);
+		}
+
+		// create bar chart
 		JFreeChart barChart = ChartFactory.createBarChart(
-				"Doses by vaccine type",
-				"Category",
-				"Score",
-				createDataSet(),
+				"Doses by Vaccine type", // title
+				"Vaccine Type", // categoryAxis (X) label
+				"Number of doses", // valueAxis (Y) label
+				createDataSet(mapVaccineTypeToDoses), //create dataset
 				PlotOrientation.VERTICAL,
 				true, true, false);
+
 		JPanel chartPanel =  new ChartPanel( barChart );
 		chartPanel.setPreferredSize(new java.awt.Dimension( 560 , 367 ) );
+
 		displayPanel.add(chartPanel, BorderLayout.CENTER);
 		visualizeTab.setBackground(selected);
 		windowFrame.setVisible(true);
-		//placeholder.setText("Histogram placeholder");
+		placeholder.setText("Histogram placeholder");
 	}
+
+	/**
+	 * This is the method which display pie chart on visualize tab.
+	 * @param no params passed
+	 * @return void
+	 */
 	public void showPieChart()
 	{
 		resetMenuBar();
 		displayPanel.removeAll();
-		JFreeChart chart = createChart(createDataset( ) );
+
+		// create map of vaccine locations to number of doses for each type
+		Map<Object, Integer> mapLocationToDoses = new HashMap<Object, Integer>();
+
+		for(int i = 1; i < tableModel.getRowCount() ; i++) {
+			Object vaccineLocation = tableModel.getValueAt(i, 5);
+			int numberOfDoses = mapLocationToDoses.containsKey(vaccineLocation) ? mapLocationToDoses.get(vaccineLocation) : 0;
+			mapLocationToDoses.put(vaccineLocation, numberOfDoses + 1);
+		}
+
+		// create pie chart based on data set
+		JFreeChart chart = createChart(createDataset(mapLocationToDoses) );
 		JPanel chartPanel =  new ChartPanel( chart );
+
 		displayPanel.add(chartPanel, BorderLayout.CENTER);
 		visualizeTab.setBackground(selected);
 		windowFrame.setVisible(true);
 
 	}
-	private CategoryDataset createDataSet( ) {
-		final String pfizer = "Pfizer";
-		final String johnson = "Johnson&Johnson";
-		final String moderna = "Moderna";
+
+	/**
+	 * This is the method which create dataset for bar chart.
+	 * @param mapVaccineTypeToDoses
+	 * @return CategoryDataset
+	 */
+	private CategoryDataset createDataSet( Map<Object,Integer> mapVaccineTypeToDoses) {
+
 		final String doses = "Doses";
 		final DefaultCategoryDataset dataset =
 				new DefaultCategoryDataset( );
 
-		dataset.addValue( 10 , pfizer , doses );
-		dataset.addValue( 20 , moderna , doses );
-		dataset.addValue( 50 , johnson , doses );
+		for (Map.Entry<Object, Integer> pair : mapVaccineTypeToDoses.entrySet()) {
+			// add number of doses, vaccine type, doses keyword to the data set for each value in map
+			dataset.addValue(new Double(pair.getValue()), (Comparable) pair.getKey(), doses);
+		}
 
 		return dataset;
 	}
 
-	private static PieDataset createDataset( ) {
-		System.out.println("in create data set");
+	/**
+	 * This is the method which create dataset for the pie chart.
+	 * @param mapTypeToDoses
+	 * @return PieDataset
+	 */
+	private static PieDataset createDataset(Map<Object, Integer> mapTypeToDoses) {
+
 		DefaultPieDataset dataset = new DefaultPieDataset( );
-		dataset.setValue(  "India", new Double( 20 ) );
-		dataset.setValue( "Australia" , new Double( 20 ) );
-		dataset.setValue( "China" , new Double( 40 ) );
-		dataset.setValue( "United States" , new Double( 10 ) );
+		for (Map.Entry<Object, Integer> pair : mapTypeToDoses.entrySet()) {
+			//add vaccine type, number of doses to the data set for each map value
+			dataset.setValue((Comparable) pair.getKey(), new Double(pair.getValue()));
+		}
 		return dataset;
 	}
 
+	/**
+	 * This is the method which create pie chart based on dataset passed.
+	 * @param dataset
+	 * @return JFreeChart
+	 */
 	private static JFreeChart createChart( PieDataset dataset ) {
-		System.out.println("in create chart");
+
+		//create pie chart based on the dataset
 		JFreeChart chart = ChartFactory.createPieChart(
-				"Doses by location",   // chart title
+				"Doses by vaccine location",   // chart title
 				dataset,          // data
 				true,             // include legend
 				true,

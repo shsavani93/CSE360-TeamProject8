@@ -66,7 +66,7 @@ public class ActionHandler implements ActionListener
 			if(e.getActionCommand().equals("Display Histogram"))
 			{
 				//todo pass chart parameter?
-				gui.showHistogram();
+				gui.showBarChart();
 			}
 			//TODO VISUALIZE EVENTS
 			if (e.getActionCommand().equals("Display Pie Chart"))
