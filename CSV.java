@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 public class CSV {
 
@@ -39,7 +40,11 @@ public class CSV {
                 found = true;
                 reader.close();
             } catch (FileNotFoundException e) {
-                System.out.println("File not Found");
+                found = true;
+                JOptionPane.showMessageDialog(null, "File not found");
+            } catch (NullPointerException e) {
+                found = true;
+                JOptionPane.showMessageDialog(null, "No file selected");
             } catch (IOException e) {
                 e.printStackTrace();
             }
