@@ -58,9 +58,9 @@ public class CSV {
      * @param filePath String path to which file is created
      * @param fileName String name of the created file
      */
-    public static void writeCSV(String[][] data, String filePath, String fileName) {
+    public static void writeCSV(String[][] data, String filePath) {
         try {
-            FileWriter writer = new FileWriter(new File(filePath, fileName));
+            FileWriter writer = new FileWriter(new File(filePath));
             for(int i = 0; i < data.length; i++) {
                 writer.append(String.join(",", data[i]));
                 writer.append("\n");

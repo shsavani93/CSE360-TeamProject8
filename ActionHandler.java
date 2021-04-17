@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -54,8 +55,11 @@ public class ActionHandler implements ActionListener
 			if(e.getActionCommand().equals("Save Data"))
 			{
 				gui.saveDataInitiate();
-				fw = new FileWindow(false);
-				outFilePath = fw.getOutputFilePath();
+
+				//fw = new FileWindow(false);
+				//outFilePath = fw.getOutputFilePath();
+				//System.out.println(outFilePath);
+				gui.saveData();
 				gui.saveDataComplete();
 			}		
 			//TODO VISUALIZE EVENTS

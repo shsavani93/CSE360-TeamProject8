@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.Arrays;
 import javax.swing.JPanel;
 
@@ -18,7 +19,9 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 public class GUI
 {
@@ -347,6 +350,47 @@ public class GUI
 		timer.setInitialDelay(2000);
 		timer.start();
 	}
+
+	//Extracts the data in the JTable into a 2D array
+
+	public Object[][] getTableData (JTable table) {
+		TableModel dtm = table.getModel();
+		int nRow = dtm.getRowCount(), nCol = dtm.getColumnCount();
+		Object[][] tableData = new Object[nRow][nCol];
+		for (int i = 0 ; i < nRow ; i++)
+			for (int j = 0 ; j < nCol ; j++)
+				tableData[i][j] = dtm.getValueAt(i,j);
+		return tableData;
+	}
+
+	//save data gui event
+	public void saveData()
+	{
+		Object[][] tableData = getTableData(table);
+		String[][] modifiedTableData = new String[table.getRowCount()+1][table.getColumnCount()];
+
+		for(int j = 0; j < table.getColumnCount(); j++) {
+			modifiedTableData[0][j] = table.getColumnName(j);
+		}
+		for (int i = 0; i < tableData.length; i++) {
+			for (int j = 0; j < tableData[i].length; j++) {
+				modifiedTableData[i+1][j] = (String) tableData[i][j];
+			}
+		}
+
+		JFileChooser fc = new JFileChooser();
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV FILES", "csv", "csv");
+		fc.setFileFilter(filter);
+		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+		int returnVal = fc.showSaveDialog(saveTab);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			String fc1 = fc.getSelectedFile().getAbsolutePath();
+			String output = fc1.concat(".csv");
+			CSV.writeCSV(modifiedTableData, output);
+		}
+	}
+
 	//save data gui event
 	public void saveDataInitiate()
 	{
