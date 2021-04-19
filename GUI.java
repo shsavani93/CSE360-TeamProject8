@@ -28,7 +28,7 @@ public class GUI
 {
 	private JFrame windowFrame;
 	private JButton aboutTab,loadTab,addTab, saveTab,visualizeTab,addData, openFile;
-	private JPanel windowPanel, displayPanel, aboutPanel, loadPanel, addPanel, visualizePanel, graph;
+	private JPanel windowPanel, displayPanel, aboutPanel, loadPanel, addPanel, visualizePanel, graph, chartPanel;
 	private JTextField id, lastName, firstName, vaccineType, vaccineDate, vaccineLocation;
 	private JLabel addStatus;
 	private JTable table;
@@ -162,23 +162,30 @@ public class GUI
 		addPanel.add(addButtonPanel);
 		addData.addActionListener(new ActionHandler(this));
 		
+		
 		//load Panel Design
 		JPanel graphPanel = new JPanel();
-		graphPanel.setLayout(new GridLayout(0,1));
+		graphPanel.setLayout(new BoxLayout(graphPanel, BoxLayout.PAGE_AXIS));
 		tableModel = new DefaultTableModel(data, columnLabels);
 		table = new JTable(tableModel);
-		graphPanel.add(table.getTableHeader());
-		graphPanel.add(table);
+		JScrollPane scroll = new JScrollPane(table);
+		scroll.add(table.getTableHeader());
+		graphPanel.add(scroll);
+		scroll.getViewport().getView().setBackground(main);
+		scroll.getViewport().getView().setForeground(main);
+		scroll.setBorder(BorderFactory.createEmptyBorder());
+		table.setFillsViewportHeight(true);
 		table.setDefaultEditor(Object.class, null);
 		table.getTableHeader().setReorderingAllowed(false);
 		openFile = new JButton("Open File");
 		loadPanel.setLayout(new BorderLayout());
 		loadPanel.add(graphPanel, BorderLayout.NORTH);
+		loadPanel.add(graphPanel, BorderLayout.CENTER);
 		loadPanel.add(openFile, BorderLayout.SOUTH);	
-		loadPanel.setBackground(main);
+		loadPanel.setForeground(main);
 		graphPanel.setBackground(main);	
 		table.getTableHeader().setBackground(selected);
-		table.setBackground(tertiary);
+		table.setBackground(secondary);
 		table.setForeground(textSecondary);
 		table.getTableHeader().setForeground(textSecondary);
 		openFile.setBackground(secondary);
@@ -201,7 +208,7 @@ public class GUI
 		//TODO the panel for graph object???? *****************************************************
 		graph = new JPanel();
 		graph.setBackground(main);
-		placeholder = new JLabel("Placeholder for no chart");
+		placeholder = new JLabel("Please Select a Chart to Display");
 		placeholder.setForeground(textPrimary);
 		graph.add(placeholder);
 		chartButtonPanel.add(pie);
@@ -378,18 +385,26 @@ public class GUI
 				modifiedTableData[i+1][j] = (String) tableData[i][j];
 			}
 		}
-
+		
 		JFileChooser fc = new JFileChooser();
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV FILES", "csv", "csv");
 		fc.setFileFilter(filter);
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
 		int returnVal = fc.showSaveDialog(saveTab);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			String fc1 = fc.getSelectedFile().getAbsolutePath();
 			String output = fc1.concat(".csv");
 			CSV.writeCSV(modifiedTableData, output);
-		}
+			}
+		
+		/*
+		 * BRANDON FIX?
+		 
+		FileWindow saveFile = new FileWindow(false);
+		String filePath = saveFile.getOutputFilePath() + ".csv";
+		CSV.writeCSV(modifiedTableData, filePath);
+		
+		*/
 	}
 
 	//save data gui event
@@ -413,7 +428,18 @@ public class GUI
 	public void showBarChart()
 	{
 		resetMenuBar();
-		displayPanel.removeAll();
+		if(graph.getParent() == visualizePanel)
+		{
+			visualizePanel.remove(graph);
+		}
+		if(chartPanel != null)
+		{
+			if(chartPanel.getParent() == visualizePanel)
+			{
+				visualizePanel.remove(chartPanel);
+			}
+		}
+		//displayPanel.removeAll();
 
 		// create map of vaccine type to number of doses for each type
 		Map<Object, Integer> mapVaccineTypeToDoses = new HashMap<Object, Integer>();
@@ -433,13 +459,12 @@ public class GUI
 				PlotOrientation.VERTICAL,
 				true, true, false);
 
-		JPanel chartPanel =  new ChartPanel( barChart );
+		chartPanel =  new ChartPanel( barChart );
 		chartPanel.setPreferredSize(new java.awt.Dimension( 560 , 367 ) );
-
-		displayPanel.add(chartPanel, BorderLayout.CENTER);
+		visualizePanel.add(chartPanel,BorderLayout.CENTER);
+		//displayPanel.add(chartPanel, BorderLayout.CENTER);
 		visualizeTab.setBackground(selected);
 		windowFrame.setVisible(true);
-		placeholder.setText("Histogram placeholder");
 	}
 
 	/**
@@ -450,7 +475,18 @@ public class GUI
 	public void showPieChart()
 	{
 		resetMenuBar();
-		displayPanel.removeAll();
+		if(graph.getParent() == visualizePanel)
+		{
+			visualizePanel.remove(graph);
+		}
+		if(chartPanel != null)
+		{
+			if(chartPanel.getParent() == visualizePanel)
+			{
+				visualizePanel.remove(chartPanel);
+			}
+		}
+		//displayPanel.removeAll();
 
 		// create map of vaccine locations to number of doses for each type
 		Map<Object, Integer> mapLocationToDoses = new HashMap<Object, Integer>();
@@ -463,9 +499,9 @@ public class GUI
 
 		// create pie chart based on data set
 		JFreeChart chart = createChart(createDataset(mapLocationToDoses) );
-		JPanel chartPanel =  new ChartPanel( chart );
-
-		displayPanel.add(chartPanel, BorderLayout.CENTER);
+		chartPanel =  new ChartPanel( chart );
+		visualizePanel.add(chartPanel,BorderLayout.CENTER);
+		//displayPanel.add(chartPanel, BorderLayout.CENTER);
 		visualizeTab.setBackground(selected);
 		windowFrame.setVisible(true);
 
