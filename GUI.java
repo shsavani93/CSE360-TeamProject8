@@ -30,11 +30,9 @@ public class GUI
 	private JButton aboutTab,loadTab,addTab, saveTab,visualizeTab,addData, openFile;
 	private JPanel windowPanel, displayPanel, aboutPanel, loadPanel, addPanel, visualizePanel, graph, chartPanel;
 	private JTextField id, lastName, firstName, vaccineType, vaccineDate, vaccineLocation;
-	private JLabel addStatus;
+	private JLabel status;
 	private JTable table;
 	private DefaultTableModel tableModel;
-	
-	
 	
 	
 	JLabel placeholder; // TODO TEMPORARY
@@ -104,7 +102,7 @@ public class GUI
 		aboutPanel.add(aboutTeam, BorderLayout.CENTER);
 	
 		//add Panel Design
-		addStatus = new JLabel("");
+		status = new JLabel("");
 		JPanel addButtonPanel = new JPanel(new GridLayout(0,1));
 		addPanel.setLayout(new BoxLayout(addPanel, BoxLayout.Y_AXIS));
 		addData = new JButton("Add Entry");
@@ -142,8 +140,8 @@ public class GUI
 		firstNames.setBackground(main);
 		vaccineTypes.setBackground(main);
 		vaccineLocations.setBackground(main);
-		addStatus.setBackground(main);
-		addStatus.setForeground(textPrimary);
+		status.setBackground(main);
+		status.setForeground(textPrimary);
 		dates.add(vaccineDateLabel); dates.add(vaccineDate); 
 		ids.add(idLabel); ids.add(id);
 		lastNames.add(lastNameLabel); lastNames.add(lastName); 
@@ -156,7 +154,7 @@ public class GUI
 		addPanel.add(firstNames);
 		addPanel.add(vaccineTypes);
 		addPanel.add(vaccineLocations);
-		addPanel.add(addStatus);
+		addPanel.add(status);
 		addPanel.setBackground(main);
 		addButtonPanel.add(addData);
 		addPanel.add(addButtonPanel);
@@ -321,44 +319,47 @@ public class GUI
 		String data[] = { id.getText(), lastName.getText(), firstName.getText(), vaccineType.getText(),vaccineDate.getText(), vaccineLocation.getText() };
 		return data;
 	}
+	
+	
+	
+	
 	//correct add tab syntax gui event
 	public void validEntry(Object rowData[] )
 	{
 		tableModel.addRow(rowData);
-		addStatus.setText("Entry successfully added.");
-		addStatus.setForeground(affirmatory);
+		status.setText("Entry successfully added.");
+		status.setForeground(affirmatory);
+		
 		id.setText("");
 		lastName.setText("");
 		firstName.setText("");
 		vaccineType.setText("");
 		vaccineDate.setText("");
 		vaccineLocation.setText("");
-		Timer timer = new Timer(2000, new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				addStatus.setText("");
-			}
-		});
-		timer.setInitialDelay(2000);
-		timer.start();
+		
 	}
-	//incorrect add tab syntax gui event
 	public void invalidEntry()
 	{
-		addStatus.setText("Entry failed. Incorrect Format.");
-		addStatus.setForeground(negatory);
-		Timer timer = new Timer(2000, new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				addStatus.setText("");
-			}
-		});
-		timer.setInitialDelay(2000);
-		timer.start();
+		status.setText("Invalid Entry Format.");
+		status.setForeground(negatory);
 	}
+	//incorrect add tab syntax gui event
 
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	//Extracts the data in the JTable into a 2D array
 
 	public Object[][] getTableData (JTable table) {

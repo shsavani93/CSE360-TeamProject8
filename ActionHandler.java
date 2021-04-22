@@ -30,17 +30,20 @@ public class ActionHandler implements ActionListener
 			date = gui.getDataEntry()[4];
 			location = gui.getDataEntry()[5];
 					
+			
+			boolean isValid = isValidInput(id, fname, lname, type.toLowerCase(), date, location);
+			
 			//***************************************************************************************
 			//if valid input (put conditional for determining if valid input here
 			// TODO if(correct syntax)
-			if (true)
+			if (isValid)
 			{
 				Object rowData [] = new  Object[]{id, lname, fname, type, date, location};
 				gui.validEntry(rowData); //GUI EVENT
 			}
 			else
 			{
-				gui.invalidEntry();//GUI EVENT
+				gui.invalidEntry();
 			}
 		}
 			//TODO do something with the filepath.... saved in String infilePath
@@ -101,4 +104,157 @@ public class ActionHandler implements ActionListener
 			gui.visualizeTab();
 		}
 	}
+	public boolean isValidInput(String id, String fname, String lname, String type, String date, String location)
+	{
+		//set to false
+		boolean result = false;
+		boolean dateBad = false;
+		boolean nameBad = false;
+		boolean idBad = false;
+		boolean vaxBad = true;
+		
+
+		//if it matches a vaccine type set to true
+		String[] vaccineTypes = { "sinovac" ,"pfizer", "moderna", "johnson&johnson", "astrazeneca", "novavax"};
+		for(int i = 0; i < vaccineTypes.length; i++) {
+			if(vaccineTypes[i].equals(type)) {result = true; vaxBad = false;}
+		}
+		//if fname, lname, location is null or empty set result to false
+		if(lname == null || lname.equals("")) { result = false; nameBad = true; }
+		if(fname == null || fname.equals("")) { result = false; nameBad = true;}
+		if(location == null || location.equals("")) { result = false; nameBad = true;}
+		
+		
+		//if id is not 5 numerics set result to false
+		if(id.length() != 5 || ! isANumber(id)) { result = false; idBad = true; }
+		
+		//if date is not correct mm/dd/yyyy set result to false
+		String[] dateSplit = null;
+		
+		
+		
+		try { dateSplit = date.split("/"); }
+		catch(Exception e) { result = false; dateBad = true;}
+		System.out.println(verifyDate(date));
+		
+		if(dateSplit != null)
+		{
+			if(dateSplit.length == 3){
+				if(dateSplit[0].length() != 2 || ! isANumber(dateSplit[0])) { result = false; dateBad = true; }
+				if(dateSplit[1].length() != 2 || ! isANumber(dateSplit[1])) { result = false; dateBad = true;}
+				if(dateSplit[2].length() != 4 || ! isANumber(dateSplit[2])) { result = false; dateBad = true;}
+				if(!verifyDate(date)) { result = false; dateBad = true;}
+			}
+			else {result = false; dateBad = true;}
+		}
+		
+		else {result = false; dateBad = true;}
+		if(nameBad)
+		{
+			System.out.println("bad name/loc");
+		}
+		if(idBad)
+		{
+			System.out.println("bad id");
+		}
+		if(dateBad)
+		{
+			System.out.println("bad date");
+		}
+		if(vaxBad)
+		{
+			System.out.println("bad vax");
+		}
+		return result;
+	}
+    public boolean isANumber(String line) {
+        if (line == null) { return false;}
+        try { int num = Integer.parseInt(line);} 
+        catch (NumberFormatException nfe) { return false;}
+        return true;}
+    public boolean verifyDate(String date)
+    {
+    	String[] dateSplit = date.split("/"); 
+    	String month = dateSplit[0];
+    	String day = dateSplit[1];
+    	String year = dateSplit[2];
+    	int dayNumber;
+    	int yearNumber;
+    	int monthNumber;
+        boolean leap = false;
+    	
+    	yearNumber = Integer.parseInt(year);
+    	if(day.substring(0,0) == "0") { dayNumber = Integer.parseInt(day.substring(1,1)); }
+    	else { dayNumber = Integer.parseInt(day); }
+    	
+    	if(month.substring(0,0) == "0") { monthNumber = Integer.parseInt(month.substring(1,1)); }
+    	else { monthNumber = Integer.parseInt(month); }
+    	
+    	
+    	if (yearNumber % 4 == 0) 
+    	{
+    		if (yearNumber % 100 == 0) 
+    		{
+
+    			if (yearNumber % 400 == 0)
+    			{
+    				leap = true;
+    			}
+    			else
+    			{
+    				leap = false;
+    			}
+    		}
+    		else
+    		{
+    			leap = true;
+    		}
+    	}
+    	else
+    	{
+    		leap = false;
+    	}
+    	switch(monthNumber){
+    	case 1: 
+    		if (dayNumber < 0 || dayNumber > 31) { return false;}
+    		return true;	//1 to 31
+    	case 2: 
+    		if(leap) { 
+    			if (dayNumber < 0 || dayNumber > 29) { return false;} }
+    			else { if (dayNumber < 0 || dayNumber > 28) { return false;}}
+    		return true;
+    	case 3:
+    		if (dayNumber < 0 || dayNumber > 31) { return false;}//1 to 31
+    		return true;
+    	case 4:
+    		if (dayNumber < 0 || dayNumber > 30) { return false;}//1 to 30
+    		return true;
+    	case 5:
+    		if (dayNumber < 0 || dayNumber > 31) { return false;}//1 to 31
+    		return true;
+    	case 6:
+    		if (dayNumber < 0 || dayNumber > 30) { return false;}//1 to 30
+    		return true;
+    	case 7:
+    		if (dayNumber < 0 || dayNumber > 31) { return false;}//1 to 31
+    		return true;
+    	case 8:
+    		if (dayNumber < 0 || dayNumber > 31) { return false;}//1 to 31
+    		return true;
+    	case 9:
+    		if (dayNumber < 0 || dayNumber > 30) { return false;}//1 to 30
+    		return true;
+    	case 10:
+    		if (dayNumber < 0 || dayNumber > 31) { return false;}//1 to 31
+    		return true;
+    	case 11:
+    		if (dayNumber < 0 || dayNumber > 30) { return false;} //1 to 30
+    		return true;
+    	case 12:
+    		if (dayNumber < 0 || dayNumber > 31) {return false;}//1 to 31
+    		return true;
+    	default: return false;
+    	}
+    }
+    
 }
